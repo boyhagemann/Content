@@ -76,10 +76,11 @@ class ContentServiceProvider extends ServiceProvider {
                 $options['valueField'] = 'title';
             }
              
+            $q = $model->newQuery();
+            
             // Allow for altering the select query by passing a closure in the
             // options array
             if(isset($options['query']) && is_callable($options['query'])) {
-                $q = $model->newQuery();
                 call_user_func($options['query'], $q);
             }
             
