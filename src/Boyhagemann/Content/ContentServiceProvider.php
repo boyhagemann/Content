@@ -21,13 +21,6 @@ class ContentServiceProvider extends ServiceProvider {
 	{
 		$this->package('boyhagemann/content');
         
-        Route::get('testform', 'Boyhagemann\Content\Controller\TestController@form');
-        
-        
-        
-        
-        
-        
         
         Form::macro('modelSelect', function($name, $model, Array $options = array()) {                        
             return Form::select($name, Form::multiOptionsFromModel($model, $options));
