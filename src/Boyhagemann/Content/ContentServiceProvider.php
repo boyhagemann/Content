@@ -1,7 +1,7 @@
 <?php namespace Boyhagemann\Content;
 
 use Illuminate\Support\ServiceProvider;
-use Route, Form;
+use Route, Form, App;
 
 class ContentServiceProvider extends ServiceProvider {
 
@@ -63,11 +63,11 @@ class ContentServiceProvider extends ServiceProvider {
         });
         
         Form::macro('multiOptionsFromModel', function($model, Array $options = array()) {
-            
+                            
             if(is_string($model)) {
-                $model = \App::make($model);
-            } 
-                
+                $model = App::make($model);
+            }
+            
             if(!isset($options['keyField'])) {
                 $options['keyField'] = 'id';
             }
@@ -75,9 +75,16 @@ class ContentServiceProvider extends ServiceProvider {
             if(!isset($options['valueField'])) {
                 $options['valueField'] = 'title';
             }
+             
+            // Allow for altering the select query by passing a closure in the
+            // options array
+            if(isset($options['query']) && is_callable($options['query'])) {
+                $q = $model->newQuery();
+                call_user_func($options['query'], $q);
+            }
             
             $multiOptions = array();
-            foreach($model->all() as $record) {
+            foreach($q->get() as $record) {
                 $multiOptions[$record->{$options['keyField']}] = $record->{$options['valueField']};
             }
             
