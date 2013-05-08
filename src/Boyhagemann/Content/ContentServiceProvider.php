@@ -22,6 +22,10 @@ class ContentServiceProvider extends ServiceProvider {
 		$this->package('boyhagemann/content');
         
         Route::resource('cms/models', 'Boyhagemann\Content\Controller\ModelController');
+        Route::get('cms/models/{id}/delete', array(
+            'as'    => 'cms.models.delete',
+            'uses'  => 'Boyhagemann\Content\Controller\ModelController@delete'
+        ));
         
         
         Form::macro('modelSelect', function($name, $model, Array $options = array()) {                        

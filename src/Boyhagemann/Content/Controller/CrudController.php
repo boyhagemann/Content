@@ -3,7 +3,7 @@
 namespace Boyhagemann\Content\Controller;
 
 use Boyhagemann\Content\Model\Model;
-use View, Input, Redirect, Validator;
+use App, View, Input, Redirect, Validator;
 
 class CrudController extends \BaseController {
 
@@ -28,7 +28,7 @@ class CrudController extends \BaseController {
     public function index()
     {
         $model = Model::where('class', '=', $this->modelClass)->get()->first();
-        $records = array();
+        $records = App::make($model->class)->get();
         return View::make('content::crud.index', compact('model', 'records'));
     }
 
