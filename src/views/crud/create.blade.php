@@ -1,35 +1,21 @@
-<h1>Pages</h1>
+<h1>{{ $resource->title }}</h1>
 
 <br><br>
 
 <ul class="nav nav-tabs">
-    <li><a href="{{ URL::route('cms.pages.index') }}"><i class="icon-th-list"></i> Overview</a></li>
-    <li class="active"><a href="{{ URL::route('cms.pages.create') }}"><i class="icon-plus-sign"></i> Create new page</a></li>
-    <li><a href="{{ URL::route('pages.import') }}"><i class="icon-download-alt"></i> Import pages</a></li>
+    <li><a href="{{ URL::route($resource->name . '.index') }}"><i class="icon-th-list"></i> Overview</a></li>
+    <li class="active"><a href="{{ URL::route($resource->name . '.create') }}"><i class="icon-plus-sign"></i> Create new {{ Str::lower($resource->title) }}</a></li>
 </ul>
 
-{{ Form::open(['route' => 'cms.pages.store']) }}
+{{ Form::open(['route' => $resource->name . '.store']) }}
     <ul>
+        @foreach($resourceBuilder->getElements() as $element)
         <li>
-            {{ Form::label('name', 'Name:') }}
-            {{ Form::text('name') }}
+            {{ Form::label($element->getName(), $element->getLabel()) }}
+            {{ $element->getFormHtml() }}
         </li>
+        @endforeach
 
-        <li>
-            {{ Form::label('path', 'Path:') }}
-            {{ Form::text('path') }}
-        </li>
-
-        <li>
-            {{ Form::label('title', 'Title:') }}
-            {{ Form::text('title') }}
-        </li>
-
-        <li>
-            {{ Form::label('layout_id', 'Layout:') }}
-            {{ Form::modelSelect('layout_id', 'Boyhagemann\Pages\Model\Layout') }}
-        </li>
-        
         <li>
             {{ Form::submit('Submit', array('class' => 'btn')) }}
         </li>

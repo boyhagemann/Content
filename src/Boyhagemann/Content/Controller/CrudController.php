@@ -2,23 +2,36 @@
 
 namespace Boyhagemann\Content\Controller;
 
-use Boyhagemann\Content\Model\Model;
-use App, View, Input, Redirect, Validator;
+use Boyhagemann\Content\Model\Resource;
+use Boyhagemann\Content\ResourceBuilder;
+use Boyhagemann\Content\Overview;
+use App, View, Route, Input, Redirect, Validator;
 
 class CrudController extends \BaseController {
 
-    /**
-     *
-     * @var string
-     */
-    protected $modelClass;
+    protected $resourceBuilder;
     
+    protected $overview;
+        
     /**
      * Model Repository
      *
-     * @var Illuminate\Database\Eloquent\Model
+     * @var Resource
      */
-    protected $model;
+    protected $resource;
+    
+    public function __construct(Overview $overview, ResourceBuilder $resourceBuilder)
+    {
+        $this->overview = $overview;
+        $this->resourceBuilder = $resourceBuilder;
+        
+        $overview->setResourceBuilder($resourceBuilder);
+    }
+    
+    public function init()
+    {
+        
+    }
 
     /**
      * Display a listing of the resource.
@@ -27,9 +40,15 @@ class CrudController extends \BaseController {
      */
     public function index()
     {
-        $model = Model::where('class', '=', $this->modelClass)->get()->first();
-        $records = App::make($model->class)->get();
-        return View::make('content::crud.index', compact('model', 'records'));
+        $this->init();
+        
+        $resource = $this->getResource();
+        $overview = $this->getOverview();
+        
+        $collection = $this->getModel()->get();
+        $overview->setCollection($collection);
+        
+        return View::make('content::crud.index', compact('resource', 'overview'));
     }
 
     /**
@@ -39,6 +58,12 @@ class CrudController extends \BaseController {
      */
     public function create()
     {
+        $this->init();
+        
+        $resource = $this->getResource();
+        $resourceBuilder = $this->getResourceBuilder();
+                
+        return View::make('content::crud.create', compact('resource', 'resourceBuilder'));
     }
 
     /**
@@ -109,6 +134,47 @@ class CrudController extends \BaseController {
      */
     public function destroy($id)
     {
+    }
+    
+    /**
+     * 
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function getModel()
+    {        
+        return App::make($this->getResourceBuilder()->getModelClass());
+    }
+    
+    /**
+     * 
+     * @return Resource
+     */
+    public function getResource()
+    {
+        if(!$this->resource) {            
+            $route = Route::getCurrentRoute()->getOption('originalRoute');
+            $this->resource = Resource::findOneByRoute($route);
+        }
+        
+        return $this->resource;
+    }
+    
+    /**
+     * 
+     * @return Overview
+     */
+    public function getOverview()
+    {
+        return $this->overview;
+    }
+    
+    /**
+     * 
+     * @return Overview
+     */
+    public function getResourceBuilder()
+    {
+        return $this->resourceBuilder;
     }
     
 }

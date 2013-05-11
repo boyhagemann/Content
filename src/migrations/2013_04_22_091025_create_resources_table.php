@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateModelsTable extends Migration {
+class CreateResourcesTable extends Migration {
 
     /**
      * Run the migrations.
@@ -11,17 +11,15 @@ class CreateModelsTable extends Migration {
      * @return void
      */
     public function up() {
-        Schema::create('models', function(Blueprint $table) {
+        Schema::create('resources', function(Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
             $table->string('name');
             $table->string('title');
             $table->string('class');
-            $table->string('route');
 
             $table->unique('name');
-            $table->unique('class');
-            $table->unique('route');
+            $table->index('class');
         });
     }
 
@@ -31,7 +29,7 @@ class CreateModelsTable extends Migration {
      * @return void
      */
     public function down() {
-        Schema::drop('models');
+        Schema::drop('resources');
     }
 
 }
