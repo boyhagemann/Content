@@ -28,7 +28,7 @@ class ContentServiceProvider extends ServiceProvider {
 		Event::listen('page.createWithContent', function(Page $page) {
 
 			$block = Block::whereController($page->controller)->first();
-			$section = Section::whereName('content')->first();
+			$section = $page->layout->mainSection;
 
 			$content = new Model\Content;
 			$content->page()->associate($page);
