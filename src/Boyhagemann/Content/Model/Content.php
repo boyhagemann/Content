@@ -2,6 +2,9 @@
 
 namespace Boyhagemann\Content\Model;
 
+use Boyhagemann\Pages\Model\Page;
+use Boyhagemann\Pages\Model\Section;
+
 class Content extends \Eloquent
 {
     protected $table = 'content';
@@ -58,6 +61,19 @@ class Content extends \Eloquent
     {
         $this->attributes['params'] = serialize($value);
     }
+
+	/**
+	 * @param Page    $page
+	 * @param Section $section
+	 * @return mixed
+	 */
+	static public function findByPageAndSection(Page $page, Section $section)
+	{
+		return self::where(function ($query) use($page, $section) {
+			$query->wherePageId($page->id)->whereSectionId($section->id);
+		})->orWhere('global', '=', 1)
+		  ->get();
+	}
 
 }
 
