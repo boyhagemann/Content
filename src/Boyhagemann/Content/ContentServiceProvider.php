@@ -1,7 +1,9 @@
 <?php namespace Boyhagemann\Content;
 
 use Illuminate\Support\ServiceProvider;
-use Boyhagemann\Content\Model\Resource;
+use Boyhagemann\Content\Model\Block;
+use Boyhagemann\Pages\Model\Section;
+use Boyhagemann\Pages\Model\Page;
 use Route, Form, App, Event;
 
 class ContentServiceProvider extends ServiceProvider {
@@ -22,6 +24,26 @@ class ContentServiceProvider extends ServiceProvider {
 	{
 		$this->package('boyhagemann/content');
 
+
+		Event::listen('page.createWithContent', function(Page $page) {
+
+			$block = Block::whereController($page->controller)->first();
+			$section = Section::whereName('content')->first();
+
+			$content = new Model\Content;
+			$content->page()->associate($page);
+			$content->section()->associate($section);
+
+			if($block) {
+				$content->block()->associate($block);
+			}
+			else {
+				$content->controller = $page->controller;
+			}
+
+			$content->save();
+
+		});
 	}
 
 	/**
