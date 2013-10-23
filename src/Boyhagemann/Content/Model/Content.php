@@ -69,10 +69,11 @@ class Content extends \Eloquent
 	 */
 	static public function findByPageAndSection(Page $page, Section $section)
 	{
-		return self::where(function ($query) use($page, $section) {
-			$query->wherePageId($page->id)->whereSectionId($section->id);
-		})->orWhere('global', '=', 1)
-		  ->get();
+		$query = self::whereSectionId($section->id)->where(function($q) use ($page) {
+			return $q->wherePageId($page->id)->orWhere('global', '=', 1);
+		});
+
+		return $query->get();
 	}
 
 }

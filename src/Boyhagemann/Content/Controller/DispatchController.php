@@ -5,7 +5,7 @@ namespace Boyhagemann\Content\Controller;
 use Boyhagemann\Pages\Model\Page;
 use Boyhagemann\Pages\Model\Section;
 use Boyhagemann\Content\Model\Content;
-use View, App, URL;
+use View, App, URL, Route;
 
 class DispatchController extends \BaseController
 {
@@ -41,8 +41,6 @@ class DispatchController extends \BaseController
 		));
 		$form = $fb->build();
 
-//		\dd(\Form::render($form));
-
 		// Dispatch all the blocks in this section
 		$blocks = array();
 		foreach(Content::findByPageAndSection($page, $section) as $content) {
@@ -65,8 +63,9 @@ class DispatchController extends \BaseController
 			$controller = $content->controller;
 		}
 
-		$html = App::make('DeSmart\Layout\Layout')->dispatch($controller);
+		$params = Route::getCurrentRoute()->getParameters();
+		$html = App::make('DeSmart\Layout\Layout')->dispatch($controller, $params);
 
-		return View::make('content::block', compact('html'));
+		return View::make('content::block', compact('html', 'content'));
 	}
 }
