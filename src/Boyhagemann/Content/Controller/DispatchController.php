@@ -5,7 +5,7 @@ namespace Boyhagemann\Content\Controller;
 use Boyhagemann\Pages\Model\Page;
 use Boyhagemann\Pages\Model\Section;
 use Boyhagemann\Content\Model\Content;
-use View, App, URL, Route;
+use View, App, URL, Route, Input;
 
 class DispatchController extends \BaseController
 {
@@ -32,14 +32,17 @@ class DispatchController extends \BaseController
 	 */
 	public function renderSection(Section $section, Page $page)
 	{
-		// Build the form for adding a content block in this section
-		$fb = App::make('Boyhagemann\Content\Controller\ContentController')->init('create')->getFormBuilder();
-		$fb->action(URL::route('admin.content.store'));
-		$fb->defaults(array(
-			'section_id' => $section->id,
-			'page_id' => $page->id,
-		));
-		$form = $fb->build();
+		if(Input::get('mode') == 'content') {
+
+			// Build the form for adding a content block in this section
+			$fb = App::make('Boyhagemann\Content\Controller\ContentController')->init('create')->getFormBuilder();
+			$fb->action(URL::route('admin.content.store'));
+			$fb->defaults(array(
+				'section_id' => $section->id,
+				'page_id' => $page->id,
+			));
+			$form = $fb->build();
+		}
 
 		// Dispatch all the blocks in this section
 		$blocks = array();
@@ -66,6 +69,8 @@ class DispatchController extends \BaseController
 		$params = Route::getCurrentRoute()->getParameters();
 		$html = App::make('DeSmart\Layout\Layout')->dispatch($controller, $params);
 
-		return View::make('content::block', compact('html', 'content'));
+		$mode = Input::get('mode');
+
+		return View::make('content::block', compact('html', 'content', 'mode'));
 	}
 }
