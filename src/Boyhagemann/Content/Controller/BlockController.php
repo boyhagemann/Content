@@ -23,7 +23,7 @@ class BlockController extends CrudController
      */
     public function buildModel(ModelBuilder $mb)
     {
-        $mb->name('Boyhagemann\Pages\Model\Block')->table('blocks');
+        $mb->name('Boyhagemann\Content\Model\Block')->table('blocks');
     }
 
     /**

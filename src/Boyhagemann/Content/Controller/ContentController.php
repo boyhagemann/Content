@@ -2,60 +2,37 @@
 
 namespace Boyhagemann\Content\Controller;
 
-use Boyhagemann\Pages\Model\Page;
-use Boyhagemann\Pages\Model\Section;
-use Boyhagemann\Content\Model\Content;
-use View, App;
+use Boyhagemann\Crud\CrudController;
+use Boyhagemann\Form\FormBuilder;
+use Boyhagemann\Model\ModelBuilder;
+use Boyhagemann\Overview\OverviewBuilder;
 
-class ContentController extends \BaseController
+class ContentController extends CrudController
 {
 	/**
-	 * @param Page $page
-	 * @return View
+	 * @param FormBuilder $fb
 	 */
-	public function renderPage(Page $page)
+	public function buildForm(FormBuilder $fb)
 	{
-		$layout = $page->layout;
-		$vars = array();
-
-		foreach($layout->sections as $section) {
-			$vars[$section->name] = $this->renderSection($section, $page);
-		}
-
-		return View::make($layout->name, $vars);
+		$fb->modelSelect('block_id')->model('Boyhagemann\Content\Model\Block');
+		$fb->hidden('page_id');
+		$fb->hidden('section_id');
+		$fb->hidden('position')->value(0);
 	}
 
 	/**
-	 * @param Section $section
-	 * @param Page    $page
-	 * @return View
+	 * @param ModelBuilder $mb
 	 */
-	public function renderSection(Section $section, Page $page)
+	public function buildModel(ModelBuilder $mb)
 	{
-		$blocks = array();
-
-		foreach(Content::findByPageAndSection($page, $section) as $content) {
-			$blocks[] = $this->renderContent($content);
-		}
-
-		return View::make('content::section', compact('blocks'));
+		$mb->name('Boyhagemann\Content\Model\Content')->table('content');
 	}
 
 	/**
-	 * @param Content $content
-	 * @return View
+	 * @param OverviewBuilder $ob
 	 */
-	public function renderContent(Content $content)
+	public function buildOverview(OverviewBuilder $ob)
 	{
-		if($content->block) {
-			$controller = $content->block->controller;
-		}
-		else {
-			$controller = $content->controller;
-		}
-
-		$html = App::make('DeSmart\Layout\Layout')->dispatch($controller);
-
-		return View::make('content::block', compact('html'));
 	}
+
 }
