@@ -24,6 +24,8 @@ class ContentServiceProvider extends ServiceProvider {
 	{
 		$this->package('boyhagemann/content');
 
+        $this->app->register('DeSmart\Layout\LayoutServiceProvider');
+        $this->app->register('DeSmart\ResponseException\ResponseExceptionServiceProvider');
 
 		Event::listen('page.createWithContent', function(Page $page) {
 
@@ -44,6 +46,8 @@ class ContentServiceProvider extends ServiceProvider {
 			$content->save();
 
 		});
+
+		Route::model('content', 'Boyhagemann\Content\Model\Content');
 	}
 
 	/**

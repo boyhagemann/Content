@@ -66,7 +66,7 @@ class DispatchController extends \BaseController
 			$controller = $content->controller;
 		}
 
-		$params = Route::getCurrentRoute()->getParameters();
+		$params = array_merge($content->params, Route::getCurrentRoute()->getParameters());
 		$html = App::make('DeSmart\Layout\Layout')->dispatch($controller, $params);
 
 		$mode = Input::get('mode');

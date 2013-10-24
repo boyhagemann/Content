@@ -11,6 +11,7 @@
         "php": ">=5.3.0",
         "illuminate/support": "4.0.x",
         "desmart/laravel-layout": "1.0.*",
+		"desmart/response-exception": "1.0.*",
 		"boyhagemann/crud": "dev-master"
     },
     "autoload": {
