@@ -6,7 +6,7 @@
 		</div>
 	</header>
 	@endif
-	
+
 	@foreach($blocks as $block)
 	{{ $block }}
 	@endforeach
