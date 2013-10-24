@@ -61,7 +61,7 @@ class ContentController extends CrudController
 		// Check if there is a form configuration present for this block
 		list($controller, $action) = explode('@', $block->controller);
 		if(!method_exists($controller, $action . 'Config')) {
-			Redirect::route($content->page->route);
+			Redirect::route($content->page->alias);
 		}
 
 		// Render the configuration form
@@ -82,7 +82,7 @@ class ContentController extends CrudController
 		$content->params = Input::all();
 		$content->save();
 
-		return Redirect::route($content->page->route);
+		return Redirect::route($content->page->alias);
 	}
 
 }
