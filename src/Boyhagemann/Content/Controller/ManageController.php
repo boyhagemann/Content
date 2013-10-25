@@ -2,7 +2,7 @@
 
 namespace Boyhagemann\Content\Controller;
 
-use View, Request, Session;
+use View, Request, Session, Redirect;
 
 class ManageController extends \BaseController
 {
@@ -12,10 +12,12 @@ class ManageController extends \BaseController
 
 			case 'view':
 				Session::put('mode', 'view');
+				return Redirect::refresh();
 				break;
 
 			case 'content':
 				Session::put('mode', 'content');
+				return Redirect::refresh();
 				break;
 		}
 

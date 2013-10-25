@@ -31,7 +31,7 @@ class ContentController extends CrudController
 	 */
 	public function onSaved(Content $content)
 	{
-		$redirect = Redirect::route('admin.content.config.form', $content->id);
+		$redirect = Redirect::route('admin.content.config.edit', $content->id);
 		return ResponseException::chain($redirect)->fire();
 	}
 

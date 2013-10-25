@@ -2,29 +2,20 @@
 .content_section {
 	position: relative;
 }
-.content_section__header {
-	background: #ddd;
-	width: 100%;
-	z-index: 1000;
-	padding: 10px;
+.content_section .content_section__navbar {
+	min-height: 40px;
+	padding-right: 0;
+	background: #f6f6f6;
 }
-.content_section:hover .content_section__header {
-	display: block;
+.content_section__nav {
+	padding: 0;
+	margin: 0;
 }
-
-
-.content_block {
-	position: relative;
+.content_section__link {
+	color: #aaa;
 }
-.content_block__header {
-	display: none;
-	position: absolute;
-	right: 0;
-	top: 0;
-	background: #ddd;
-	z-index: 1100;
-	text-align: right;
-}
-.content_block:hover .content_block__header {
-	display: block;
+.content_section__title {
+	font-size: 15px;
+	color: #aaa;
+	margin: 10px 0 0 0;
 }
