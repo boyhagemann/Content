@@ -27,7 +27,7 @@ class ContentServiceProvider extends ServiceProvider {
         $this->app->register('DeSmart\Layout\LayoutServiceProvider');
         $this->app->register('DeSmart\ResponseException\ResponseExceptionServiceProvider');
 
-		Event::listen('page.createWithContent', function(Page $page) {
+		Event::listen('page.createResourcePage', function(Page $page) {
 
 			$block = Block::whereController($page->controller)->first();
 			$section = Section::whereName('content')->first();

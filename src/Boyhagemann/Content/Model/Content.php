@@ -62,19 +62,19 @@ class Content extends \Eloquent
         $this->attributes['params'] = serialize($value);
     }
 
-	/**
-	 * @param Page    $page
-	 * @param Section $section
-	 * @return mixed
-	 */
-	static public function findByPageAndSection(Page $page, Section $section)
-	{
-		$query = self::whereSectionId($section->id)->where(function($q) use ($page) {
-			return $q->wherePageId($page->id)->orWhere('global', '=', 1);
-		});
+    /**
+     * @param Page    $page
+     * @param Section $section
+     * @return mixed
+     */
+    static public function findByPageAndSection(Page $page, Section $section)
+    {
+            $query = self::whereSectionId($section->id)->where(function($q) use ($page) {
+                    return $q->wherePageId($page->id)->orWhere('global', '=', 1);
+            });
 
-		return $query->get();
-	}
+            return $query->get();
+    }
 
 }
 
