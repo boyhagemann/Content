@@ -5,7 +5,7 @@ namespace Boyhagemann\Content\Controller;
 use Boyhagemann\Pages\Model\Page;
 use Boyhagemann\Pages\Model\Section;
 use Boyhagemann\Content\Model\Content;
-use View, App, URL, Route, Session;
+use View, App, URL, Route, Session, Event;
 
 class DispatchController extends \BaseController
 {
@@ -70,6 +70,8 @@ class DispatchController extends \BaseController
 		$html = App::make('DeSmart\Layout\Layout')->dispatch($controller, $params);
 		$mode = Session::get('mode');
 
-		return View::make('content::block', compact('html', 'content', 'mode'));
+                Event::fire('content.dispatch.renderContent', array($html, $content));
+                
+                return View::make('content::block', compact('html', 'content', 'mode'));
 	}
 }

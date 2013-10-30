@@ -1,5 +1,5 @@
 <section class="content_block">
-	@if($mode == 'content' && !$content->layout)
+	@if($mode == 'content' && !$content->layout_id)
 
 	<nav class="content_block__navbar navbar navbar-default">
 		<ul class="content_block__nav nav navbar-nav pull-left">

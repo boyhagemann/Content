@@ -2,8 +2,11 @@
 
 use Illuminate\Support\ServiceProvider;
 use Boyhagemann\Content\Model\Block;
+use Boyhagemann\Content\Model\Content;
 use Boyhagemann\Pages\Model\Section;
 use Boyhagemann\Pages\Model\Page;
+use DeSmart\ResponseException\Exception as ResponseException;
+
 use Route, Form, App, Event;
 
 class ContentServiceProvider extends ServiceProvider {
@@ -86,6 +89,15 @@ class ContentServiceProvider extends ServiceProvider {
 			$content->save();
                        
 		});
+                
+                Event::listen('content.dispatch.renderContent', function($response, Content $content) {
+                    
+                    // Catch a Redirect response
+                    if($response instanceof \Illuminate\Http\RedirectResponse) {                        
+                        ResponseException::chain($response)->fire();
+                    }
+                    
+                });
 
 		// Every route with the parameter {content} will now have
 		// the Content model out of the box.
