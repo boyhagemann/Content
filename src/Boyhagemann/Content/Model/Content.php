@@ -16,6 +16,7 @@ class Content extends \Eloquent
     protected $guarded = array('id');
 
     protected $fillable = array(
+        'layout_id',
         'page_id',
         'section_id',
         'block_id',
@@ -31,6 +32,14 @@ class Content extends \Eloquent
     {
         return $this->belongsTo('Boyhagemann\Pages\Model\Page');
     }
+
+	/**
+	 * @return Layout
+	 */
+	public function layout()
+	{
+		return $this->belongsTo('Boyhagemann\Pages\Model\Layout');
+	}
 
     /**
      * @return Section
@@ -70,7 +79,7 @@ class Content extends \Eloquent
     static public function findByPageAndSection(Page $page, Section $section)
     {
             $query = self::whereSectionId($section->id)->where(function($q) use ($page) {
-                    return $q->wherePageId($page->id)->orWhere('global', '=', 1);
+                    return $q->wherePageId($page->id)->orWhere('global', '=', 1)->orWhere('layout_id', '=', $page->layout->id);
             });
 
             return $query->get();

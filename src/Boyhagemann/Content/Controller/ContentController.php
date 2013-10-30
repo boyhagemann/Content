@@ -21,6 +21,7 @@ class ContentController extends CrudController
 	public function buildForm(FormBuilder $fb)
 	{
 		$fb->modelSelect('block_id')->model('Boyhagemann\Content\Model\Block');
+		$fb->hidden('layout_id');
 		$fb->hidden('page_id');
 		$fb->hidden('section_id');
 		$fb->hidden('position')->value(0);
