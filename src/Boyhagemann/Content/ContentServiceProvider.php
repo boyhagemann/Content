@@ -57,12 +57,21 @@ class ContentServiceProvider extends ServiceProvider {
 		 */
 		Event::listen('page.createWithContent', function(Page $page) {
 
+			// If the page doesn't have a controller, then we can do nothing
 			if(!$page->controller) {
 				return;
 			}
 
+			// Check if there already is content attached to this page.
+			// If so, then we don't have to add new content.
+			if(Model\Content::wherePageId($page->id)->get()) {
+				return;
+			}
+
+			// Get the main content section
 			$section = Section::whereName('content')->first();
 
+			// Create the new content
 			$content = new Model\Content;
 			$content->page()->associate($page);
 			$content->section()->associate($section);
@@ -70,6 +79,8 @@ class ContentServiceProvider extends ServiceProvider {
 			$content->save();
 		});
 
+		// Every route with the parameter {content} will now have
+		// the Content model out of the box.
 		Route::model('content', 'Boyhagemann\Content\Model\Content');
 	}
 
