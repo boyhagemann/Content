@@ -32,6 +32,13 @@ class ContentServiceProvider extends ServiceProvider {
 		 */
 		Event::listen('page.createResourcePage', function(Page $page) {
 
+
+			// Check if there already is content attached to this page.
+			// If so, then we don't have to add new content.
+			if(Model\Content::wherePageId($page->id)->first()) {
+				return;
+			}
+                        
 			$block = Block::whereController($page->controller)->first();
 			$section = Section::whereName('content')->first();
 
@@ -56,7 +63,7 @@ class ContentServiceProvider extends ServiceProvider {
 		 * place the content later on.
 		 */
 		Event::listen('page.createWithContent', function(Page $page) {
-
+                    
 			// If the page doesn't have a controller, then we can do nothing
 			if(!$page->controller) {
 				return;
@@ -64,10 +71,10 @@ class ContentServiceProvider extends ServiceProvider {
 
 			// Check if there already is content attached to this page.
 			// If so, then we don't have to add new content.
-			if(Model\Content::wherePageId($page->id)->get()) {
+			if(Model\Content::wherePageId($page->id)->first()) {
 				return;
 			}
-
+ 
 			// Get the main content section
 			$section = Section::whereName('content')->first();
 
@@ -77,6 +84,7 @@ class ContentServiceProvider extends ServiceProvider {
 			$content->section()->associate($section);
 			$content->controller = $page->controller;
 			$content->save();
+                       
 		});
 
 		// Every route with the parameter {content} will now have
