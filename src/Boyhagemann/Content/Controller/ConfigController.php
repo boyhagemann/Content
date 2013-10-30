@@ -2,16 +2,8 @@
 
 namespace Boyhagemann\Content\Controller;
 
-use Boyhagemann\Crud\CrudController;
-use Boyhagemann\Form\FormBuilder;
-use Boyhagemann\Model\ModelBuilder;
-use Boyhagemann\Overview\OverviewBuilder;
-
 use Boyhagemann\Content\Model\Content;
-use Boyhagemann\Content\Model\Block;
-use DeSmart\ResponseException\Exception as ResponseException;
-
-use App, Form, Input, Redirect, Request, Layout, Str, Route, Session;
+use App, Form, Input, Redirect, Request, Layout, Session;
 
 class ConfigController extends \BaseController
 {
