@@ -1,5 +1,5 @@
 <section class="content_block">
-	@if($mode == 'content' && !$content->layout_id)
+	@if($isContentMode && !$content->layout_id && $content->block)
 
 	<nav class="content_block__navbar navbar navbar-default">
 		<ul class="content_block__nav nav navbar-nav pull-left">
@@ -14,9 +14,11 @@
 			</li>
 		</ul>
 		<ul class="content_block__nav nav navbar-nav pull-right">
+			@if($hasConfigForm)
 			<li>
-				<a href="{{ URL::route('admin.content.config.edit', $content->id) }}" class="btn btn-default">Config</a>
+				<a href="{{ URL::route('admin.content.config.edit', $content->id) }}?mode=view" class="btn btn-default">Config</a>
 			</li>
+			@endif
 			<li>
 				{{ Form::open(array('route' => array('admin.content.destroy', $content->id), 'method' => 'delete', 'class' => 'form-inline')) }}
 				{{ Form::submit('Remove', array('class' => 'btn btn-default')) }}
@@ -26,5 +28,10 @@
 
 	</nav>
 	@endif
-	{{ $html }}
+
+	@if($isContentMode && $content->block)
+		<div class="content_block__inner">{{ $html }}</div>
+	@else
+		{{ $html }}
+	@endif
 </section>

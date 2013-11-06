@@ -1,5 +1,5 @@
 <section class="content_section">
-	@if(isset($form))
+	@if($isContentMode && $isModePublic)
 	<nav class="content_section__navbar navbar navbar-default">
 		<p class="navbar-text">{{ $section->title }}</p>
 		<ul class="content_section__nav nav nav-pill pull-right">

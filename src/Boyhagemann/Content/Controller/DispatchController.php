@@ -19,7 +19,7 @@ class DispatchController extends \BaseController
 		$vars = array();
 
 		foreach($layout->sections as $section) {
-			$vars[$section->name] = $this->renderSection($section, $page);
+			$vars[$section->name] = $this->renderSection($section, $page, false);
 		}
 
 		return View::make($layout->name, $vars);
@@ -32,11 +32,14 @@ class DispatchController extends \BaseController
 	 */
 	public function renderSection(Section $section, Page $page)
 	{
-		if(Session::get('mode') == 'content') {
+		$isContentMode = Session::get('mode') == 'content';
+		$isModePublic = $section->isPublic();
+
+		if($isContentMode) {
 
 			// Build the form for adding a content block in this section
 			$fb = App::make('Boyhagemann\Content\Controller\ContentController')->init('create')->getFormBuilder();
-			$fb->action(URL::route('admin.content.store'));
+			$fb->action(URL::route('admin.content.store') . '?mode=view');
 			$fb->defaults(array(
 				'section_id' => $section->id,
 				'page_id' => $page->id,
@@ -50,7 +53,7 @@ class DispatchController extends \BaseController
 			$blocks[] = $this->renderContent($content);
 		}
 
-		return View::make('content::section', compact('blocks', 'section', 'form'));
+		return View::make('content::section', compact('blocks', 'section', 'form', 'isContentMode', 'isModePublic'));
 	}
 
 	/**
@@ -59,6 +62,9 @@ class DispatchController extends \BaseController
 	 */
 	public function renderContent(Content $content)
 	{
+		$isContentMode = Session::get('mode') == 'content';
+		$hasConfigForm = $content->hasConfigForm();
+
 		if($content->block) {
 			$controller = $content->block->controller;
 		}
@@ -68,17 +74,15 @@ class DispatchController extends \BaseController
 
 		$params = array_merge($content->params, Route::getCurrentRoute()->getParameters());
                 
-                try {
-                    $html = App::make('DeSmart\Layout\Layout')->dispatch($controller, $params);
-                }
-                catch(\RuntimeException $e) {
-                    $html = '--- Block not configured properly: missing required fields ---';
-                }
-                
-		$mode = Session::get('mode');
+		try {
+			$html = App::make('DeSmart\Layout\Layout')->dispatch($controller, $params);
+		}
+		catch(\RuntimeException $e) {
+			$html = '--- Block not configured properly: missing required fields ---';
+		}
 
-                Event::fire('content.dispatch.renderContent', array($html, $content));
-                
-                return View::make('content::block', compact('html', 'content', 'mode'));
+		Event::fire('content.dispatch.renderContent', array($html, $content));
+
+		return View::make('content::block', compact('html', 'content', 'isContentMode', 'hasConfigForm'));
 	}
 }

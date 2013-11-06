@@ -85,5 +85,27 @@ class Content extends \Eloquent
             return $query->get();
     }
 
+	/**
+	 * @return string
+	 */
+	public function getController()
+	{
+		if($this->block) {
+			return $this->block->controller;
+		}
+		else {
+			return $this->controller;
+		}
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function hasConfigForm()
+	{
+		list($controller, $action) = explode('@', $this->getController());
+		return method_exists($controller, $action . 'Config');
+	}
+
 }
 
