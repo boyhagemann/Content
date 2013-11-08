@@ -90,14 +90,14 @@ class ContentServiceProvider extends ServiceProvider {
                        
 		});
                 
-                Event::listen('content.dispatch.renderContent', function($response, Content $content) {
-                    
-                    // Catch a Redirect response
-                    if($response instanceof \Illuminate\Http\RedirectResponse) {                        
-                        ResponseException::chain($response)->fire();
-                    }
-                    
-                });
+		Event::listen('content.dispatch.renderContent', function($response, Content $content) {
+
+			// Catch a Redirect response
+			if($response instanceof \Illuminate\Http\RedirectResponse) {
+				ResponseException::chain($response)->fire();
+			}
+
+		});
 
 		// Every route with the parameter {content} will now have
 		// the Content model out of the box.
