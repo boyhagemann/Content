@@ -75,7 +75,7 @@ class DispatchController extends \BaseController
 		$params = array_merge($content->params, Route::getCurrentRoute()->getParameters());
                 
 		try {
-			$html = App::make('DeSmart\Layout\Layout')->dispatch($controller, $params);
+			$html = App::make('layout')->dispatch($controller, $params);
 		}
 		catch(\RuntimeException $e) {
 			$html = '--- Block not configured properly: missing required fields ---';

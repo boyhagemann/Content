@@ -19,15 +19,15 @@ class ContentServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->package('boyhagemann/content');
+            $this->package('boyhagemann/content');
 
-        $this->app->register('DeSmart\Layout\LayoutServiceProvider');
-        $this->app->register('DeSmart\ResponseException\ResponseExceptionServiceProvider');
-
-		// Every route with the parameter {content} will now have
-		// the Content model out of the box.
-		Route::model('content', 'Boyhagemann\Content\Model\Content');
-	}
+            $this->app->register('DeSmart\Layout\LayoutServiceProvider');
+            $this->app->register('DeSmart\ResponseException\ResponseExceptionServiceProvider');
+            
+            // Every route with the parameter {content} will now have
+            // the Content model out of the box.
+            Route::model('content', 'Boyhagemann\Content\Model\Content');
+        }
 
 	/**
 	 * Register the service provider.
