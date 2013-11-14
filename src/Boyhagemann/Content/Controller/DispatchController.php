@@ -28,10 +28,17 @@ class DispatchController extends \BaseController
 	/**
 	 * @param Section $section
 	 * @param Page    $page
-	 * @return View
+	 * @return View|null
 	 */
 	public function renderSection(Section $section, Page $page)
 	{
+		// Dispatch all the blocks in this section
+                $content = Content::findByPageAndSection($page, $section);
+                
+                if(!$content->count()) {
+                    return;
+                }
+                
 		$isContentMode = Session::get('mode') == 'content';
 		$isModePublic = $section->isPublic();
 
@@ -47,18 +54,22 @@ class DispatchController extends \BaseController
 			$form = $fb->build();
 		}
 
-		// Dispatch all the blocks in this section
+                
 		$blocks = array();
-		foreach(Content::findByPageAndSection($page, $section) as $content) {
-			$blocks[] = $this->renderContent($content);
+		foreach($content as $item) {
+			$blocks[] = $this->renderContent($item);
 		}
+                
+                if(implode('', $blocks) === '') {
+                    return;
+                }
 
 		return View::make('content::section', compact('blocks', 'section', 'form', 'isContentMode', 'isModePublic'));
 	}
 
 	/**
 	 * @param Content $content
-	 * @return View
+	 * @return View|null
 	 */
 	public function renderContent(Content $content)
 	{
@@ -76,6 +87,10 @@ class DispatchController extends \BaseController
                 
 		try {
 			$html = App::make('layout')->dispatch($controller, $params);
+                        
+                        if(!$html) {
+                            return;
+                        }
 		}
 		catch(\RuntimeException $e) {
 			$html = '--- Block not configured properly: missing required fields ---';
