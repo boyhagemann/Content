@@ -1,6 +1,6 @@
 @if($isContentMode && $isModePublic)
 
-<section class="content_section panel panel-primary">
+<section class="content_section panel panel-primary clearfix">
     
     <div class="panel-heading">
         

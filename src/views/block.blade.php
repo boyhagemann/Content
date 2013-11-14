@@ -1,7 +1,7 @@
 
 @if($isContentMode && !$content->layout_id && $content->block)
     
-<section class="content_block panel panel-primary">
+<section class="content_block panel panel-primary clearfix">
 
     <div class="panel-heading">
 
