@@ -27,7 +27,8 @@ class ConfigController extends \BaseController
 
 		// Build the configuration form
 		$fb = App::make('Boyhagemann\Form\FormBuilder');
-		$fb->action(\URL::route('admin.content.config.update', $content->id));
+		$fb->route('admin.content.config.update', $content->id);
+        $fb->method('put');
 
 		// Now call the config method and give the form to the user.
 		// The user can add elements to the configuration form.
@@ -36,9 +37,9 @@ class ConfigController extends \BaseController
 		// After the form is completely built we can set the values
 		// we might already have for this content block.
 		$fb->defaults($content->params);
-
+        
 		// Return the html with the form
-		return Form::render($fb->build());
+		return $fb->build();
 	}
 
 	/**

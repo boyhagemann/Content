@@ -1,37 +1,47 @@
-<section class="content_block">
-	@if($isContentMode && !$content->layout_id && $content->block)
 
-	<nav class="content_block__navbar navbar navbar-default">
-		<ul class="content_block__nav nav navbar-nav pull-left">
-			<li class="content_block__title">
-				<p class="navbar-text">
-				@if($content->block)
-				{{ $content->block->title }}
-				@else
-				{{ $content->controller }}
-				@endif
-				</p>
-			</li>
-		</ul>
-		<ul class="content_block__nav nav navbar-nav pull-right">
-			@if($hasConfigForm)
-			<li>
-				<a href="{{ URL::route('admin.content.config.edit', $content->id) }}?mode=view" class="btn btn-default">Config</a>
-			</li>
-			@endif
-			<li>
-				{{ Form::open(array('route' => array('admin.content.destroy', $content->id), 'method' => 'delete', 'class' => 'form-inline')) }}
-				{{ Form::submit('Remove', array('class' => 'btn btn-default')) }}
-				{{ Form::close() }}
-			</li>
-		</ul>
+@if($isContentMode && !$content->layout_id && $content->block)
+    
+<section class="content_block panel panel-primary">
 
-	</nav>
-	@endif
+    <div class="panel-heading">
 
-	@if($isContentMode && $content->block)
+        @if($content->block)
+        {{ $content->block->title }}
+        @else
+        {{ $content->controller }}
+        @endif
+                                           
+            <ul class="content_block__nav nav pull-right">
+                @if($hasConfigForm)
+                <li>
+                    <a href="{{ URL::route('admin.content.config.edit', $content->id) }}?mode=view" class="btn btn-default btn-xs" role="button">Config</a>
+                </li>
+                @endif
+                <li>
+                    <div class="pull-right">
+                    {{ Form::open(array('route' => array('admin.content.destroy', $content->id), 'method' => 'delete', 'class' => 'form-inline')) }}
+                    {{ Form::submit('Remove', array('class' => 'btn btn-default btn-xs')) }}
+                    {{ Form::close() }}
+                    </div>
+                </li>
+            </ul>
+
+    </div>
+
+    <div class="panel-body">
+        
 		<div class="content_block__inner">{{ $html }}</div>
-	@else
-		{{ $html }}
-	@endif
+        
+    </div>
+        
 </section>
+
+@else
+   
+<section class="content_block">
+    
+	{{ $html }}
+    
+</section>
+
+@endif
