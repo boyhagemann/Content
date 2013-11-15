@@ -8,25 +8,8 @@ class ManageController extends \BaseController
 {
 	public function toolbar()
 	{
-		switch(Request::get('mode')) {
-
-			case 'view':
-				Session::put('mode', 'view');
-				return Redirect::refresh();
-				break;
-
-			case 'content':
-				Session::put('mode', 'content');
-				return Redirect::refresh();
-				break;
-		}
-
-		if(!Session::get('mode')) {
-			Session::put('mode', 'view');
-		}
-
-		$mode = Session::get('mode');
-
-		return View::make('content::manage.toolbar', compact('mode'));
+		return View::make('content::manage.toolbar', array(
+			'mode' => Session::get('mode'),
+		));
 	}
 }

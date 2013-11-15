@@ -53,7 +53,7 @@ class ConfigController extends \BaseController
 		$content->save();
 
 		// Redirect to the page where the content is placed on.
-		return Redirect::to(Session::get('referer'));
+		return Redirect::to(Session::get('referer') . '?mode=content');
 	}
 
 }

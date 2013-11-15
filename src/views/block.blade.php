@@ -1,9 +1,10 @@
 
-@if($isContentMode && !$content->layout_id && $content->block)
+@if($isContentMode && $isModePublic)
     
 <section class="content_block panel panel-primary clearfix">
 
-    <div class="panel-heading">
+	@if(!$content->layout_id && $content->block)
+    <div class="panel-heading content_block__heading">
 
         @if($content->block)
         {{ $content->block->title }}
@@ -11,22 +12,19 @@
         {{ $content->controller }}
         @endif
                                            
-            <ul class="content_block__nav nav pull-right">
-                @if($hasConfigForm)
-                <li>
-                    <a href="{{ URL::route('admin.content.config.edit', $content->id) }}?mode=view" class="btn btn-default btn-xs" role="button">Config</a>
-                </li>
-                @endif
-                <li>
-                    <div class="pull-right">
-                    {{ Form::open(array('route' => array('admin.content.destroy', $content->id), 'method' => 'delete', 'class' => 'form-inline')) }}
-                    {{ Form::submit('Remove', array('class' => 'btn btn-default btn-xs')) }}
-                    {{ Form::close() }}
-                    </div>
-                </li>
-            </ul>
+		<div class="pull-right">
+			@if($hasConfigForm)
+			<a href="{{ URL::route('admin.content.config.edit', $content->id) }}?mode=view" class="content_block__link btn btn-link btn-default"><i class="icon-wrench"></i></a>
+			@endif
+			<div class="pull-right">
+			{{ Form::open(array('route' => array('admin.content.destroy', $content->id), 'method' => 'delete', 'class' => 'form-inline')) }}
+			{{ Form::button('<i class="icon-remove"></i>', array('type' => 'submit', 'class' => 'content_block__link btn btn-link btn-default')) }}
+			{{ Form::close() }}
+			</div>
+		</div>
 
     </div>
+	@endif
 
     <div class="panel-body">
         

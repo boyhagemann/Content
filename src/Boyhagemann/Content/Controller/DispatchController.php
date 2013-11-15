@@ -53,14 +53,14 @@ class DispatchController extends \BaseController
 
             // Build the form for adding a content block in this section
             $fb = App::make('Boyhagemann\Content\Controller\ContentController')->init('create')->getFormBuilder();
-            $fb->url(URL::route('admin.content.store') . '?mode=view');
+            $fb->url(URL::route('admin.content.store'));
             $fb->defaults(array(
                 'section_id' => $section->id,
                 'page_id' => $page->id,
             ));
             $form = $fb->build();
         }
-        elseif (!$content->count()) {
+        elseif (!$content->count() || implode('', $blocks) === '') {
             return;
         }
 
@@ -74,6 +74,7 @@ class DispatchController extends \BaseController
     public function renderContent(Content $content)
     {
         $isContentMode = Session::get('mode') == 'content';
+		$isModePublic = $content->section->isPublic();
         $hasConfigForm = $content->hasConfigForm();
 
         if ($content->block) {
@@ -99,7 +100,7 @@ class DispatchController extends \BaseController
 
         Event::fire('content.dispatch.renderContent', array($html, $content));
 
-        return View::make('content::block', compact('html', 'content', 'isContentMode', 'hasConfigForm'));
+        return View::make('content::block', compact('html', 'content', 'isContentMode', 'isModePublic', 'hasConfigForm'));
     }
 
 }
