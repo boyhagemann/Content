@@ -3,6 +3,7 @@
 namespace Boyhagemann\Content\Controller;
 
 use Boyhagemann\Pages\Model\Page;
+use Boyhagemann\Pages\Model\Layout;
 use Boyhagemann\Pages\Model\Section;
 use Boyhagemann\Content\Model\Content;
 use View,
@@ -10,7 +11,8 @@ use View,
     URL,
     Route,
     Session,
-    Event;
+    Event,
+    stdClass;
 
 class DispatchController extends \BaseController
 {
@@ -21,6 +23,21 @@ class DispatchController extends \BaseController
      */
     public function renderPage(Page $page)
     {
+        if(!$page->layout && $page->controller) {
+            return $this->renderController($page->controller);
+        }
+        
+        return $this->renderPageWithLayout($page);
+    }
+    
+    /**
+     * 
+     * @param Layout $layout
+     * @param Page $page
+     * @return View|null
+     */
+    public function renderPageWithLayout(Page $page)
+    {
         $layout = $page->layout;
         $vars = array();
 
@@ -28,7 +45,7 @@ class DispatchController extends \BaseController
             $vars[$section->name] = $this->renderSection($section, $page, false);
         }
 
-        return View::make($layout->name, $vars);
+        return View::make($layout->name, $vars);        
     }
 
     /**
@@ -44,7 +61,7 @@ class DispatchController extends \BaseController
         // Dispatch all the blocks in this section
         $content = Content::findByPageAndSection($page, $section);
 
-        $blocks = array();
+        $blocks = array();        
         foreach ($content as $item) {
             $blocks[] = $this->renderContent($item);
         }
@@ -63,7 +80,9 @@ class DispatchController extends \BaseController
         elseif (!$content->count() || implode('', $blocks) === '') {
             return;
         }
-
+        
+        Event::fire('content.dispatch.renderSection', array(&$blocks, $section, $page, $isContentMode, $isModePublic));
+        
         return View::make('content::section', compact('blocks', 'section', 'form', 'isContentMode', 'isModePublic'));
     }
 
@@ -84,10 +103,8 @@ class DispatchController extends \BaseController
             $controller = $content->controller;
         }
 
-        $params = array_merge($content->params, Route::getCurrentRoute()->getParameters());
-
         try {
-            $html = App::make('layout')->dispatch($controller, $params);
+            $html = $this->renderController($controller, $content->params);
 
             if (!$html) {
                 return;
@@ -101,6 +118,19 @@ class DispatchController extends \BaseController
         Event::fire('content.dispatch.renderContent', array($html, $content));
 
         return View::make('content::block', compact('html', 'content', 'isContentMode', 'isModePublic', 'hasConfigForm'));
+    }
+    
+    /**
+     * 
+     * @param string $controller
+     * @param array $params
+     * @return View
+     */
+    public function renderController($controller, $params = array())
+    {
+        $params = array_merge($params, Route::getCurrentRoute()->getParameters());
+        
+        return App::make('layout')->dispatch($controller, $params);
     }
 
 }

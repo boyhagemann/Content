@@ -18,15 +18,19 @@
 				<div class="modal-body">
 					{{ $form }}
 				</div>
-			</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
+			</div>
+		</div>
+	</div>
 
     <div class="panel-body">
 
+        @yield('before_blocks')
+                
         @foreach($blocks as $block)
         {{ $block }}
         @endforeach
+        
+        @yield('after_blocks')
     
     </div>
     
@@ -35,9 +39,11 @@
 @else
 
 <section class="content_section ">	
-	@foreach($blocks as $block)
+    
+    @foreach($blocks as $block)
 	{{ $block }}
 	@endforeach
+    
 </section>
 
 @endif

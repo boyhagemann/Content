@@ -7,6 +7,22 @@ use App, Form, Input, Redirect, Request, Layout, Session;
 
 class ConfigController extends \BaseController
 {
+
+	/**
+	 * @param Content $content
+	 * @return mixed
+	 */
+	public function store()
+	{        
+		// Store the content from the configuration form
+        $content = Content::create(Input::all());
+		$content->params = Input::all();
+		$content->save();
+
+		// Redirect to the page where the content is placed on.
+		return Redirect::back();
+	}
+    
 	/**
 	 * @param Content $content
 	 * @return mixed

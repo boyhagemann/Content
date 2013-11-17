@@ -32,7 +32,7 @@ class AddContentOnPage
 	public function onCreateWithContent(Page $page)
 	{
 		// If the page doesn't have a controller, then we can do nothing
-		if(!$page->controller) {
+		if(!$page->controller || !$page->layout) {
 			return;
 		}
 
