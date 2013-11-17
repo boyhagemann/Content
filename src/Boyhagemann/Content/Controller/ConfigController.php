@@ -13,7 +13,9 @@ class ConfigController extends \BaseController
 	 * @return mixed
 	 */
 	public function store()
-	{        
+	{   
+        $params = array_diff_key(Input::all(), array_flip(array('page_id', 'block_id', 'section_id', '_token')));
+                
 		// Store the content from the configuration form
         $content = Content::create(Input::all());
 		$content->params = Input::all();
