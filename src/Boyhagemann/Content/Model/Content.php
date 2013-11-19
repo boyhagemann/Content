@@ -22,6 +22,7 @@ class Content extends \Eloquent
         'block_id',
         'controller',
         'params',
+		'position',
         'global'
         );
 
@@ -82,7 +83,7 @@ class Content extends \Eloquent
                     return $q->wherePageId($page->id)->orWhere('global', '=', 1)->orWhere('layout_id', '=', $page->layout->id);
             });
 
-            return $query->get();
+            return $query->orderBy('position')->get();
     }
 
 	/**

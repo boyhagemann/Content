@@ -8,7 +8,7 @@ use Boyhagemann\Model\ModelBuilder;
 use Boyhagemann\Overview\OverviewBuilder;
 use Boyhagemann\Content\Model\Content;
 use DeSmart\ResponseException\Exception as ResponseException;
-use Redirect;
+use Redirect, Request;
 
 class ContentController extends CrudController
 {
@@ -57,6 +57,10 @@ class ContentController extends CrudController
      */
     public function onSaved(Content $content)
     {
+		if(Request::ajax()) {
+			return;
+		}
+
         $redirect = Redirect::to(\URL::route('admin.content.config.edit', $content->id). '?mode=view');
         return ResponseException::chain($redirect)->fire();
     }

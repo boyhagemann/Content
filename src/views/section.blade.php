@@ -1,6 +1,6 @@
 @if($isContentMode && $isModePublic)
 
-<section class="content_section panel panel-primary clearfix">
+<section class="content_section panel panel-primary clearfix" data-section="{{ $section->id }}">
     
     <div class="panel-heading content_section__heading">
 
