@@ -12,7 +12,8 @@
         "illuminate/support": "4.0.x",
         "desmart/laravel-layout": "1.0.*",
 		"desmart/response-exception": "1.0.*",
-		"boyhagemann/pages": "dev-master"
+		"boyhagemann/pages": "dev-master",
+		"boyhagemann/text": "dev-master"
     },
     "autoload": {
         "classmap": [
