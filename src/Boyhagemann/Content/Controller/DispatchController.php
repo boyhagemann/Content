@@ -59,11 +59,14 @@ class DispatchController extends \BaseController
         $isModePublic = $section->isPublic();
         
         // Dispatch all the blocks in this section
-        $content = Content::findByPageAndSection($page, $section);
-
+//        $content = Content::findByPageAndSection($page, $section);
+        $content = $page->content;
+        
         $blocks = array();        
         foreach ($content as $item) {
-            $blocks[] = $this->renderContent($item);
+            if($item->section_id == $section->id) {
+                $blocks[] = $this->renderContent($item);
+            }
         }
 
         if ($isContentMode) {
