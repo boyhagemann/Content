@@ -2,6 +2,7 @@
 
 namespace Boyhagemann\Content\Controller;
 
+use Illuminate\Database\Eloquent\Collection;
 use Boyhagemann\Pages\Model\Page;
 use Boyhagemann\Pages\Model\Layout;
 use Boyhagemann\Pages\Model\Section;
@@ -41,8 +42,10 @@ class DispatchController extends \BaseController
         $layout = $page->layout;
         $vars = array();
 
+        $content = Content::findByPage($page);
+
         foreach ($layout->sections as $section) {
-            $vars[$section->name] = $this->renderSection($section, $page, false);
+            $vars[$section->name] = $this->renderSection($section, $content);
         }
 
         return View::make($layout->name, $vars);        
@@ -53,15 +56,12 @@ class DispatchController extends \BaseController
      * @param Page    $page
      * @return View|null
      */
-    public function renderSection(Section $section, Page $page)
+    public function renderSection(Section $section, Collection $content)
     {
         $isContentMode = Session::get('mode') == 'content';
         $isModePublic = $section->isPublic();
         
         // Dispatch all the blocks in this section
-//        $content = Content::findByPageAndSection($page, $section);
-        $content = $page->content;
-        
         $blocks = array();        
         foreach ($content as $item) {
             if($item->section_id == $section->id) {
@@ -76,7 +76,7 @@ class DispatchController extends \BaseController
             $fb->url(URL::route('admin.content.store'));
             $fb->defaults(array(
                 'section_id' => $section->id,
-                'page_id' => $page->id,
+                'page_id' => $section->page_id,
             ));
             $form = $fb->build();
         }
@@ -84,7 +84,7 @@ class DispatchController extends \BaseController
             return;
         }
         
-        Event::fire('content.dispatch.renderSection', array(&$blocks, $section, $page, $isContentMode, $isModePublic));
+        Event::fire('content.dispatch.renderSection', array(&$blocks, $section, $section->page, $isContentMode, $isModePublic));
         
         return View::make('content::section', compact('blocks', 'section', 'form', 'isContentMode', 'isModePublic'));
     }

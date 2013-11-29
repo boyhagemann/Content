@@ -73,17 +73,18 @@ class Content extends \Eloquent
     }
 
     /**
-     * @param Page    $page
-     * @param Section $section
+     * @param Page $page
      * @return mixed
      */
-    static public function findByPageAndSection(Page $page, Section $section)
+    static public function findByPage(Page $page)
     {
-            $query = self::whereSectionId($section->id)->where(function($q) use ($page) {
-                    return $q->wherePageId($page->id)->orWhere('global', '=', 1)->orWhere('layout_id', '=', $page->layout->id);
-            });
+		$query = self::where(function($q) use ($page) {
+			return $q->wherePageId($page->id)
+					 ->orWhere('global', 	'=', 1)
+				     ->orWhere('layout_id', '=', $page->layout->id);
+		});
 
-            return $query->orderBy('position')->get();
+		return $query->with('page', 'layout', 'section', 'block')->orderBy('position')->get();
     }
 
 	/**
