@@ -12,8 +12,7 @@ use View,
     URL,
     Route,
     Session,
-    Event,
-    stdClass;
+    Event;
 
 class DispatchController extends \BaseController
 {
@@ -107,20 +106,20 @@ class DispatchController extends \BaseController
         }
 
         try {
-            $html = $this->renderController($controller, $content->params);
+            $response = $this->renderController($controller, $content->params);
 
-            if (!$html) {
+            if (!$response) {
                 return;
             }
             
         } 
         catch (\RuntimeException $e) {
-            $html = '--- Block not configured properly: missing required fields ---';
+            $response = '--- Block not configured properly: missing required fields ---';
         }
+        
+        Event::fire('content.dispatch.renderContent', array($response, $content));
 
-        Event::fire('content.dispatch.renderContent', array($html, $content));
-
-        return View::make('content::block', compact('html', 'content', 'isContentMode', 'isModePublic', 'hasConfigForm'));
+        return View::make('content::block', compact('response', 'content', 'isContentMode', 'isModePublic', 'hasConfigForm'));
     }
     
     /**

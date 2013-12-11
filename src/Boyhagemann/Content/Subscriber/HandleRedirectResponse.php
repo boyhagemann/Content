@@ -3,16 +3,19 @@
 namespace Boyhagemann\Content\Subscriber;
 
 use Illuminate\Events\Dispatcher as Events;
-use Boyhagemann\Content\Model\Content;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Database\Eloquent\Model;
 use DeSmart\ResponseException\Exception as ResponseException;
-use Input, App, Redirect, Route;
+use Route;
 
 /**
- * If a page is created with no block yet, add a content block on that page
- * with the same controller. This gives the user more control on where to
- * place the content later on.
+ * 
+ * If a page block or a default route returns a redirect
+ * response, then redirect with the redirect exception.
+ * 
+ * There are many cases where the normal Redirect response
+ * won't work because of dispatching multiple routes. This
+ * subscriber fixes that.
+ * 
  */
 class HandleRedirectResponse
 {
@@ -23,14 +26,28 @@ class HandleRedirectResponse
 	 */
 	public function subscribe(Events $events)
 	{
-		$events->listen('content.dispatch.renderContent', array($this, 'handleRedirectResponse'));
+		$events->listen('content.dispatch.renderContent', array($this, 'handleDispatchResponse'));
+		
+        Route::after(array($this, 'handleRouteResponse'));
+	}
+    
+	/**
+	 * @param mixed $response
+	 */
+	public function handleRouteResponse($request, $response)
+	{
+        unset($request); // Use in conde for keeping code quality
+        
+		// Catch a Redirect response
+		if($response instanceof RedirectResponse) {
+			ResponseException::chain($response)->fire();
+		}
 	}
 
 	/**
-	 * @param         $response
-	 * @param Content $content
+	 * @param mixed $response
 	 */
-	public function handleRedirectResponse($response, Content $content)
+	public function handleDispatchResponse($response)
 	{
 		// Catch a Redirect response
 		if($response instanceof RedirectResponse) {

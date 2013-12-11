@@ -28,7 +28,7 @@
 
     <div class="panel-body">
         
-		<div class="content_block__inner">{{ $html }}</div>
+		<div class="content_block__inner">{{ $response }}</div>
         
     </div>
         
@@ -38,7 +38,7 @@
    
 <section class="content_block">
     
-	{{ $html }}
+	{{ $response }}
     
 </section>
 
