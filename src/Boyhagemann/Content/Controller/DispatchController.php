@@ -44,18 +44,19 @@ class DispatchController extends \BaseController
         $content = Content::findByPage($page);
 
         foreach ($layout->sections as $section) {
-            $vars[$section->name] = $this->renderSection($section, $content);
+            $vars[$section->name] = $this->renderSection($page, $section, $content);
         }
 
         return View::make($layout->name, $vars);        
     }
 
-    /**
-     * @param Section $section
-     * @param Page    $page
-     * @return View|null
-     */
-    public function renderSection(Section $section, Collection $content)
+	/**
+	 * @param Page       $page
+	 * @param Section    $section
+	 * @param Collection $content
+	 * @return mixed
+	 */
+	public function renderSection(Page $page, Section $section, Collection $content)
     {
         $isContentMode = Session::get('mode') == 'content';
         $isModePublic = $section->isPublic();
@@ -68,6 +69,10 @@ class DispatchController extends \BaseController
             }
         }
 
+		if (!$content->count() || implode('', $blocks) === '') {
+			return;
+		}
+
         if ($isContentMode) {
 
             // Build the form for adding a content block in this section
@@ -79,11 +84,8 @@ class DispatchController extends \BaseController
             ));
             $form = $fb->build();
         }
-        elseif (!$content->count() || implode('', $blocks) === '') {
-            return;
-        }
-        
-        Event::fire('content.dispatch.renderSection', array(&$blocks, $section, $section->page, $isContentMode, $isModePublic));
+
+        Event::fire('content.dispatch.renderSection', array(&$blocks, $section, $page, $isContentMode, $isModePublic));
         
         return View::make('content::section', compact('blocks', 'section', 'form', 'isContentMode', 'isModePublic'));
     }
@@ -98,15 +100,10 @@ class DispatchController extends \BaseController
 		$isModePublic = $content->section->isPublic();
         $hasConfigForm = $content->hasConfigForm();
 
-        if ($content->block) {
-            $controller = $content->block->controller;
-        }
-        else {
-            $controller = $content->controller;
-        }
-
         try {
-            $response = $this->renderController($controller, $content->params);
+
+			$controller = $content->getController();
+			$response = $this->renderController($controller, $content->params);
 
             if (!$response) {
                 return;
@@ -116,7 +113,7 @@ class DispatchController extends \BaseController
         catch (\RuntimeException $e) {
             $response = '--- Block not configured properly: missing required fields ---';
         }
-        
+
         Event::fire('content.dispatch.renderContent', array($response, $content));
 
         return View::make('content::block', compact('response', 'content', 'isContentMode', 'isModePublic', 'hasConfigForm'));
@@ -131,7 +128,7 @@ class DispatchController extends \BaseController
     public function renderController($controller, $params = array())
     {
         $params = array_merge($params, Route::getCurrentRoute()->getParameters());
-        
+
         return App::make('layout')->dispatch($controller, $params);
     }
 
